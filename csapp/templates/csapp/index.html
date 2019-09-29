@@ -1,0 +1,137 @@
+
+{% load staticfiles %}
+<!DOCTYPE html>
+
+{% include "csapp/head.html" %}
+
+<body class="w3-light-grey w3-content" style="max-width:1600px">
+
+<!-- Sidebar/menu -->
+<input id="myInput" style="height: 50px;width:15%;border: 2px solid #152b57;padding: 10px; margin-left: 0px;;margin-top: 10px;margin-right: 20px;margin-bottom: 10px" placeholder="Search here.."><i class="fa fa-search" aria-hidden="true"></i><br>
+<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidebar">
+
+  <div id="maker-list" class="w3-bar-block">
+    
+    <!-- <a href="#car" onclick="w3_close()" class="w3-bar-item w3-button w3-padding w3-text-teal">Car1</a>  -->
+  </div>
+</nav>
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<div class="w3-overlay w3-hide-large w3-animate-opacity" onclick="w3_close()" style="cursor:pointer" title="close side menu" id="myOverlay"></div>
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main" style="margin-left:300px">
+
+  <!-- Header -->
+  <header id="portfolio">
+    <span class="w3-button w3-hide-large w3-xxlarge w3-hover-text-grey" onclick="w3_open()"><i class="fa fa-bars"></i></span>
+    <div class="w3-container">
+
+<br>
+      <h1><i class="fa fa-car" aria-hidden="true"></i><span style="margin-left: 25px;"><b>Car-S</b></span></h1>
+      <hr>
+    <div class="w3-section w3-bottombar w3-padding-16">
+      <span class="w3-margin-right">Filter:</span> 
+      <button class="w3-button w3-black">ALL</button>
+      <button class="w3-button w3-white"><i class="w3-margin-center"></i>A</button>
+      <button class="w3-button w3-white"><i class="w3-margin-center"></i>B</button>
+      <button style="float: right" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+        Spiders
+      </button>
+    </div>
+    
+    </div>
+  </header>
+  
+  <!-- First Photo Grid-->
+  <div id="makeList" class="w3-row-padding">
+
+
+  </div>
+  
+  </div>
+  <script type="text/javascript" src="{% static 'csapp/js/jquery-3.4.1.js' %}"></script>
+  <script>
+    $(document).ready(function() {
+        $.ajax({url: "/app/makers/", success: function(result) {
+          $("#maker-list").empty();
+          $.each(result, function( index, value ) {
+          $("#maker-list").append('<a href="#" id="jqid-'+value+'" onclick=show_makes("'+value+'") class="w3-bar-item w3-button w3-padding w3-text-teal">'+value.capitalize()+'</a> ');
+    
+          });
+        }});
+
+    });
+    </script>
+      <script>
+        $(document).ready(function() {
+            $.ajax({url: "/app/maker/maruti", success: function(result) {
+              $("#makeList").empty();
+              $.each(result, function( index, value ) {
+                $("#makeList").append('<div class="w3-third w3-container w3-margin-bottom">'+
+      '<div class="w3-container w3-white"><p><b>'+value+'</b></p>'+
+      '</div></div>');
+        
+              });
+            }});
+    
+        });
+        </script>
+      <script>
+        function show_makes(sm) {
+          $.ajax({url: "/app/maker/"+sm, success: function(result) {
+            var jqid = "#jqid-"+sm;
+            $("#maker-list a").removeClass("active");
+              $(jqid).addClass("active");
+              $("#makeList").empty();
+              $.each(result, function( index, value ) {
+                $("#makeList").append('<div class="w3-third w3-container w3-margin-bottom">'+
+                    '<div class="w3-container w3-white"><p><b>'+value+'</b></p>'+
+                    '</div></div>');
+              });
+            }});
+        }
+        </script>
+        <script>
+    $(document).ready(function() {
+      $("#myInput").on("keyup", function() {
+        var search = $('#myInput').val();
+        $.ajax({url: "/app/makers/", success: function(result) {
+          $("#maker-list").empty();
+          $.each(result, function(index, value){
+             if(value.indexOf(search) > -1)
+             $("#maker-list").append('<a href="#" id="jqid-'+value+'" onclick=show_makes("'+value+'") class="w3-bar-item w3-button w3-padding w3-text-teal">'+value.capitalize()+'</a> ');
+            });
+        }});
+      });
+    });
+    </script>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Spider Details</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+         Current Spiders: <br>[
+         '<a href="https://www.cardekho.com/" target="_blank">Cardekho-Crawler</a>': 'www.cardekho.com'
+         ]<br><br>
+         Current Apis: <br>[
+         'Cardekho-Apis': '<a href='/app/makers/'>Makers</a>'
+         ]
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <!-- <button type="button" class="btn btn-primary">Add Spider</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% include "csapp/footer.html" %}
